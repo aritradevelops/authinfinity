@@ -1,0 +1,15 @@
+package {{.Package}}
+
+import "github.com/aritradevelops/crudpaglu/pkg/core"
+
+type {{.Entity}}Controller struct {
+	core.Controller[*{{.Entity}}]
+}
+
+
+func Controller() *{{.Entity}}Controller {
+	var {{.Package}}Service = Service()
+	return &{{.Entity}}Controller{
+		Controller: core.NewController(core.Service[*{{.Entity}}]({{.Package}}Service)),
+	}
+}

@@ -1,0 +1,18 @@
+package {{.Package}} 
+
+import (
+	"github.com/aritradevelops/crudpaglu/pkg/core"
+	"github.com/aritradevelops/crudpaglu/pkg/db"
+)
+
+type {{.Entity}}Repository struct {
+	core.Repository[*{{.Entity}}]
+}
+
+
+func Repository() *{{.Entity}}Repository {
+	var {{.Package}}Model = Model()
+	return &{{.Entity}}Repository{
+		Repository: core.NewRepository[*{{.Entity}}]({{.Package}}Model, db.Instance()),
+	}
+}

@@ -1,0 +1,17 @@
+package {{.Package}} 
+
+import (
+	"github.com/aritradevelops/crudpaglu/pkg/core"
+	"github.com/gofiber/fiber/v2"
+)
+
+func RegisterRoutes(router fiber.Router) {
+	controller := Controller()
+	{{.Package}}Router := router.Group("/{{.RouteGroup}}")
+	{{.Package}}Router.Use(core.SetModule("{{.Entity}}"))
+	{{.Package}}Router.Get("/list", controller.List)
+	{{.Package}}Router.Post("/create", controller.Create)
+	{{.Package}}Router.Get("/view/:id", controller.View)
+	{{.Package}}Router.Put("/update/:id", controller.Update)
+	{{.Package}}Router.Delete("/delete/:id", controller.Delete)
+}

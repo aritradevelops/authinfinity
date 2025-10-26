@@ -1,0 +1,13 @@
+package core
+
+type Schema interface {
+	GetID() string
+	SetCreatedAt()
+	SetUpdatedAt()
+	SetDeletedAt()
+	UnsetDeletedBy()
+	SetCreatedBy(string)
+	SetUpdatedBy(string)
+	SetDeletedBy(string)
+	SetAccountID(string)
+}
