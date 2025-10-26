@@ -189,12 +189,130 @@ func renderModule(mi moduleInput) error {
 	}
 
 	lg.Info("updated server.go successfully")
+	// Refresh migrate models/imports dynamically
+	if err := refreshMigrateModels(mi); err != nil {
+		lg.Error("refresh migrate models failed", slog.Any("err", err))
+		return err
+	}
+	return nil
+}
+
+// refreshMigrateModels scans internal/app/modules and rewrites cmd/cli/migrate/migrate.go
+// to import each module and populate the models slice accordingly.
+func refreshMigrateModels(mi moduleInput) error {
+	repoRoot, err := cliutil.FindRepoRoot(".")
+	if err != nil {
+		return err
+	}
+	modulesDir := filepath.Join(repoRoot, "internal", "app", "modules")
+	lg.Info("refreshing migrate models", slog.String("modulesDir", modulesDir))
+	dirs, err := os.ReadDir(modulesDir)
+	if err != nil {
+		return err
+	}
+	lg.Info("scanned modules directory", slog.Int("entries", len(dirs)))
+	// collect found modules
+	type mod struct{ pkg, entity, importPath string }
+	var found []mod
+	for _, d := range dirs {
+		if !d.IsDir() {
+			continue
+		}
+		name := d.Name()
+		modelPath := filepath.Join(modulesDir, name, fmt.Sprintf("%s_model.go", name))
+		if _, err := os.Stat(modelPath); err == nil {
+			entity := cases.Title(language.English).String(strings.ToLower(name))
+			found = append(found, mod{pkg: name, entity: entity, importPath: fmt.Sprintf("%s/internal/app/modules/%s", mi.ModulePath, name)})
+			lg.Info("found model", slog.String("pkg", name), slog.String("entity", entity))
+		}
+	}
+	// open migrate.go
+	migratePath := filepath.Join(repoRoot, "cmd", "cli", "migrate", "generate.go")
+	fset := token.NewFileSet()
+	srcBytes, err := os.ReadFile(migratePath)
+	if err != nil {
+		return err
+	}
+	f, err := parser.ParseFile(fset, migratePath, string(srcBytes), parser.ParseComments)
+	if err != nil {
+		return err
+	}
+	lg.Info("parsed migrate file", slog.String("path", migratePath))
+	// remove existing module imports
+	removed := 0
+	for _, imp := range f.Imports {
+		p := strings.Trim(imp.Path.Value, "\"")
+		if strings.Contains(p, "/internal/app/modules/") {
+			if astutil.DeleteImport(fset, f, p) {
+				removed++
+			}
+		}
+	}
+	lg.Info("removed module imports", slog.Int("count", removed))
+	// add new imports
+	added := 0
+	for _, m := range found {
+		if astutil.AddImport(fset, f, m.importPath) {
+			added++
+		}
+	}
+	lg.Info("added module imports", slog.Int("count", added))
+	// rewrite models slice
+	rewrote := false
+	ast.Inspect(f, func(n ast.Node) bool {
+		as, ok := n.(*ast.GenDecl)
+		if !ok {
+			return true
+		}
+		if len(as.Specs) != 1 {
+			return true
+		}
+		valSpec, ok := as.Specs[0].(*ast.ValueSpec)
+		if !ok {
+			return true
+		}
+
+		if len(valSpec.Names) != 1 || len(valSpec.Values) != 1 {
+			return true
+		}
+
+		if valSpec.Names[0].Name != "models" {
+			return true
+		}
+
+		// build elements: &pkg.Entity{}
+		var elts []ast.Expr
+		for _, m := range found {
+			elts = append(elts, &ast.UnaryExpr{Op: token.AND, X: &ast.CompositeLit{Type: &ast.SelectorExpr{X: &ast.Ident{Name: m.pkg}, Sel: &ast.Ident{Name: m.entity}}}})
+		}
+		eltsOrginal, ok := valSpec.Values[0].(*ast.CompositeLit)
+		if !ok {
+			return true
+		}
+		eltsOrginal.Elts = elts
+		rewrote = true
+		return false
+	})
+	if !rewrote {
+		return errors.New("did not find models slice to rewrite in generate.go")
+	}
+	lg.Info("rewrote models slice", slog.Int("models", len(found)))
+	// write back
+	out, err := os.Create(migratePath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	if err := printer.Fprint(out, fset, f); err != nil {
+		return err
+	}
+	lg.Info("updated migrate file", slog.String("path", migratePath))
 	return nil
 }
 
 func newGenerateCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "generate <module_names...>",
+		Use:   "generate:modules <module_names...>",
 		Short: "Generate modules with CRUD boilerplate",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -104,7 +104,7 @@ func deleteModule(mi moduleInput) error {
 
 func newRemoveCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "remove <module_names...>",
+		Use:   "remove:modules <module_names...>",
 		Short: "Remove modules",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -115,6 +115,10 @@ func newRemoveCmd() *cobra.Command {
 					return err
 				}
 				if err := deleteModule(mi); err != nil {
+					return err
+				}
+				// Refresh migrate models/imports after removal
+				if err := refreshMigrateModels(mi); err != nil {
 					return err
 				}
 				lg.Info("module removed", slog.String("entity", mi.Entity), slog.String("module", mi.Package))

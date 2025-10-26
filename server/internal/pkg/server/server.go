@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/account"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/password"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/app"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/auth"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/oauth"
@@ -83,5 +84,6 @@ func (s *Server) setupRoutes() {
 	app.RegisterRoutes(apiV1)
 	session.RegisterRoutes(apiV1)
 	oauth.RegisterRoutes(apiV1)
+	password.RegisterRoutes(apiV1)
 
 }
