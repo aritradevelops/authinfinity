@@ -33,7 +33,7 @@ func deleteModule(mi moduleInput) error {
 	}
 
 	// ✅ 1. Remove import for that module
-	importPath := fmt.Sprintf("github.com/aritradevelops/crudpaglu/internal/modules/%s", mi.Package)
+	importPath := fmt.Sprintf("github.com/aritradevelops/authinfinity/server/internal/app/modules/%s", mi.Package)
 	if astutil.DeleteImport(fset, f, importPath) {
 		fmt.Printf("Removed import: %s\n", importPath)
 	}

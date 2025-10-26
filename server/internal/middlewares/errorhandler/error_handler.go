@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/aritradevelops/authinfinity/server/internal/core"
-	"github.com/aritradevelops/authinfinity/server/internal/response"
+	"github.com/aritradevelops/authinfinity/server/internal/pkg/core"
+	"github.com/aritradevelops/authinfinity/server/internal/pkg/response"
 	"github.com/gofiber/fiber/v2"
 )
 

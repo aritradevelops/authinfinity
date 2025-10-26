@@ -113,7 +113,7 @@ func renderModule(mi moduleInput) error {
 	}
 
 	// ✅ Add the import if not already present
-	if astutil.AddImport(fset, f, fmt.Sprintf("github.com/aritradevelops/crudpaglu/internal/modules/%s", mi.Package)) {
+	if astutil.AddImport(fset, f, fmt.Sprintf("github.com/aritradevelops/authinfinity/server/internal/app/modules/%s", mi.Package)) {
 		log.Println(fmt.Sprintf("Added import for %s package", mi.Package))
 	}
 

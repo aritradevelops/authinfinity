@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"ariga.io/atlas-provider-gorm/gormschema"
-	"github.com/aritradevelops/crudpaglu/internal/modules/account"
-	"github.com/aritradevelops/crudpaglu/internal/modules/app"
-	"github.com/aritradevelops/crudpaglu/internal/modules/oauth"
-	"github.com/aritradevelops/crudpaglu/internal/modules/session"
-	"github.com/aritradevelops/crudpaglu/internal/modules/user"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/account"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/app"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/oauth"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/session"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/user"
 	"github.com/spf13/cobra"
 )
 

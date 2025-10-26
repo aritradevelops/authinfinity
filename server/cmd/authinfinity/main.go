@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/aritradevelops/authinfinity/server/internal/api"
+	"github.com/aritradevelops/authinfinity/server/internal/app/api"
 )
 
 func main() {

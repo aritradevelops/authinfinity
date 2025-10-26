@@ -1,10 +1,29 @@
-module github.com/aritradeveops/authinfinity/server
+module github.com/aritradevelops/authinfinity/server
 
 go 1.25.1
 
 require (
+	ariga.io/atlas-provider-gorm v0.6.0
+	github.com/caarlos0/env/v11 v11.3.1
+	github.com/gertd/go-pluralize v0.2.1
+	github.com/go-playground/validator/v10 v10.28.0
+	github.com/gofiber/contrib/fiberi18n/v2 v2.0.6
+	github.com/gofiber/fiber/v2 v2.52.9
+	github.com/google/uuid v1.6.0
+	github.com/gosimple/slug v1.15.0
+	github.com/lib/pq v1.10.9
+	github.com/mcuadros/go-defaults v1.2.0
+	github.com/nicksnyder/go-i18n/v2 v2.6.0
+	github.com/spf13/cobra v1.10.1
+	golang.org/x/text v0.29.0
+	golang.org/x/tools v0.36.0
+	gopkg.in/yaml.v2 v2.4.0
+	gorm.io/driver/postgres v1.6.0
+	gorm.io/gorm v1.31.0
+)
+
+require (
 	ariga.io/atlas v0.36.2-0.20250806044935-5bb51a0a956e // indirect
-	ariga.io/atlas-provider-gorm v0.6.0 // indirect
 	cel.dev/expr v0.24.0 // indirect
 	cloud.google.com/go v0.121.6 // indirect
 	cloud.google.com/go/auth v0.16.4 // indirect
@@ -29,19 +48,18 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.28.0 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
-	github.com/gofiber/fiber/v2 v2.52.9 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.15.0 // indirect
 	github.com/googleapis/go-gorm-spanner v1.8.6 // indirect
 	github.com/googleapis/go-sql-spanner v1.17.0 // indirect
+	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/pgx/v5 v5.6.0 // indirect
@@ -56,7 +74,8 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.28 // indirect
 	github.com/microsoft/go-mssqldb v1.7.2 // indirect
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
-	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.5.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
@@ -77,7 +96,6 @@ require (
 	golang.org/x/oauth2 v0.30.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/api v0.247.0 // indirect
 	google.golang.org/genproto v0.0.0-20250804133106-a7a43d27e69b // indirect
@@ -86,8 +104,6 @@ require (
 	google.golang.org/grpc v1.74.2 // indirect
 	google.golang.org/protobuf v1.36.7 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
-	gorm.io/driver/postgres v1.6.0 // indirect
 	gorm.io/driver/sqlite v1.6.0 // indirect
 	gorm.io/driver/sqlserver v1.5.4 // indirect
-	gorm.io/gorm v1.31.0 // indirect
 )
