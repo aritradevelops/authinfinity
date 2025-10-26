@@ -3,14 +3,17 @@ package {{.Package}}
 import (
 	"time"
 
-	"github.com/aritradevelops/crudpaglu/pkg/core"
+	"{{.ModulePath}}/internal/pkg/core"
 	"github.com/google/uuid"
 )
 
 // implements Schema
 type {{.Entity}} struct {
 	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:uuid_generate_v4()"`
+	// add your additional fields here
 	Name      string     `json:"name" validate:"required,min=3"`
+	// system generated fields
+	AccountID uuid.UUID  `json:"account_id" validate:"required" gorm:"type:uuid;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`
 	CreatedBy uuid.UUID  `json:"created_by" gorm:"type:uuid"`
 	UpdatedAt *time.Time `json:"updated_at" gorm:"autoUpdateTime:false"`
@@ -52,5 +55,6 @@ func (u *{{.Entity}}) SetDeletedBy(id string) {
 func (u *{{.Entity}}) UnsetDeletedBy() {
 	u.DeletedBy = nil
 }
-
-
+func (u *{{.Entity}}) SetAccountID(id string) {
+	u.AccountID, _ = uuid.Parse(id)
+}

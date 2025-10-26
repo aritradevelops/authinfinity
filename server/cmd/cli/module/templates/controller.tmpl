@@ -1,6 +1,6 @@
 package {{.Package}}
 
-import "github.com/aritradevelops/crudpaglu/pkg/core"
+import "{{.ModulePath}}/internal/pkg/core"
 
 type {{.Entity}}Controller struct {
 	core.Controller[*{{.Entity}}]

@@ -6,6 +6,7 @@ import (
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -14,12 +15,14 @@ import (
 )
 
 func deleteModule(mi moduleInput) error {
-	baseDir := filepath.Join("internal", "modules", mi.Package)
+	baseDir := filepath.Join("internal", "app", "modules", mi.Package)
+	lg.Info("removing module directory", slog.String("dir", baseDir))
 	if err := os.RemoveAll(baseDir); err != nil {
 		return err
 	}
 
-	serverPath := filepath.Join("internal", "server", "server.go")
+	serverPath := filepath.Join("internal", "pkg", "server", "server.go")
+	lg.Info("updating server AST to remove routes", slog.String("path", serverPath))
 	fset := token.NewFileSet()
 
 	src, err := os.ReadFile(serverPath)
@@ -33,9 +36,9 @@ func deleteModule(mi moduleInput) error {
 	}
 
 	// ✅ 1. Remove import for that module
-	importPath := fmt.Sprintf("github.com/aritradevelops/authinfinity/server/internal/app/modules/%s", mi.Package)
+	importPath := fmt.Sprintf("%s/internal/app/modules/%s", mi.ModulePath, mi.Package)
 	if astutil.DeleteImport(fset, f, importPath) {
-		fmt.Printf("Removed import: %s\n", importPath)
+		lg.Info("removed import", slog.String("import", importPath))
 	}
 
 	// ✅ 2. Remove <mi.Package>.RegisterRoutes(apiV1) call inside setupRoutes()
@@ -74,7 +77,7 @@ func deleteModule(mi moduleInput) error {
 
 			// Match <mi.Package>.RegisterRoutes(...)
 			if pkgIdent.Name == mi.Package && sel.Sel.Name == "RegisterRoutes" {
-				fmt.Printf("Removed call: %s.RegisterRoutes(...)\n", mi.Package)
+				lg.Info("removed RegisterRoutes call", slog.String("module", mi.Package))
 				continue // skip adding it to the new body
 			}
 
@@ -95,7 +98,7 @@ func deleteModule(mi moduleInput) error {
 		return fmt.Errorf("write file: %w", err)
 	}
 
-	fmt.Println("Successfully updated server.go after removing module.")
+	lg.Info("updated server.go after removing module")
 	return nil
 }
 
@@ -105,13 +108,18 @@ func newRemoveCmd() *cobra.Command {
 		Short: "Remove modules",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			lg.Info("starting module removal", slog.Int("count", len(args)))
 			for _, raw := range args {
-				mi := buildNames(raw)
+				mi, err := buildNames(raw)
+				if err != nil {
+					return err
+				}
 				if err := deleteModule(mi); err != nil {
 					return err
 				}
-				fmt.Printf("Removed module %s at internal/modules/%s\n", mi.Entity, mi.Package)
+				lg.Info("module removed", slog.String("entity", mi.Entity), slog.String("module", mi.Package))
 			}
+			lg.Info("module removal finished")
 			return nil
 		},
 	}

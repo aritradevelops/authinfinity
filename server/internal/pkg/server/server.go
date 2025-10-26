@@ -21,16 +21,16 @@ import (
 )
 
 type Server struct {
-	cfg *config.Config
-	db  db.Database
-	app *fiber.App
+	cfg	*config.Config
+	db	db.Database
+	app	*fiber.App
 }
 
 func New(cfg *config.Config, db db.Database) *Server {
 
 	app := fiber.New(fiber.Config{
-		AppName:      cfg.Env.ServiceName,
-		ErrorHandler: errorhandler.New(),
+		AppName:	cfg.Env.ServiceName,
+		ErrorHandler:	errorhandler.New(),
 	})
 
 	app.Use(logger.New())
@@ -38,9 +38,9 @@ func New(cfg *config.Config, db db.Database) *Server {
 	app.Use(translator.New())
 
 	server := &Server{
-		cfg: cfg,
-		db:  db,
-		app: app,
+		cfg:	cfg,
+		db:	db,
+		app:	app,
 	}
 
 	server.setupRoutes()
@@ -57,9 +57,9 @@ func (s *Server) Shutdown(ctx context.Context) error {
 func (s *Server) setupRoutes() {
 	s.app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
-			"message": "Hello!",
-			"name":    s.cfg.Env.ServiceName,
-			"status":  "running",
+			"message":	"Hello!",
+			"name":		s.cfg.Env.ServiceName,
+			"status":	"running",
 		})
 	})
 	s.app.Get("/health", func(c *fiber.Ctx) error {
@@ -69,8 +69,8 @@ func (s *Server) setupRoutes() {
 			status = "unhealthy"
 		}
 		return c.JSON(fiber.Map{
-			"status":    status,
-			"timestamp": time.Now().Format(time.RFC3339),
+			"status":	status,
+			"timestamp":	time.Now().Format(time.RFC3339),
 		})
 	})
 
