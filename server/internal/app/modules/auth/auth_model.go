@@ -9,7 +9,7 @@ import (
 
 // implements Schema
 type Auth struct {
-	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	Name      string     `json:"name" validate:"required,min=3"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`
 	CreatedBy uuid.UUID  `json:"created_by" gorm:"type:uuid"`

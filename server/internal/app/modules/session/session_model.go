@@ -9,7 +9,7 @@ import (
 
 // implements Schema
 type Session struct {
-	ID           uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID           uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	IP           string     `json:"ip" validate:"required,ip"`
 	UserAgent    string     `json:"user_agent" validate:"required"`
 	RefreshToken string     `json:"refresh_token" validate:"required"`

@@ -1,0 +1,21 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+  run_db:
+    cmds:
+      - cd docker/postgres && docker-compose up -d
+  run_server:
+    cmds:
+      - cd server && export $(cat .env | xargs) && go run ./cmd/authinfinity
+# atlas migrate diff --env gorm
+# atlas migrate apply --env gorm
+# atlas migrate apply --env dev

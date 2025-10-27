@@ -118,7 +118,7 @@ func newRemoveCmd() *cobra.Command {
 					return err
 				}
 				// Refresh migrate models/imports after removal
-				if err := refreshMigrateModels(mi); err != nil {
+				if err := refreshAtlasProvider(mi); err != nil {
 					return err
 				}
 				lg.Info("module removed", slog.String("entity", mi.Entity), slog.String("module", mi.Package))

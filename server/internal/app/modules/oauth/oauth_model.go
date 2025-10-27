@@ -9,7 +9,7 @@ import (
 
 // implements Schema
 type Oauth struct {
-	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	UserID    uuid.UUID  `json:"user_id" gorm:"type:uuid" validate:"required"`
 	AppID     uuid.UUID  `json:"app_id" gorm:"type:uuid" validate:"required"`
 	AccountID uuid.UUID  `json:"account_id" gorm:"type:uuid" validate:"required"`

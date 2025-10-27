@@ -9,7 +9,7 @@ import (
 
 // Account implements Schema
 type Account struct {
-	ID             uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	ID             uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	Name           string     `json:"name" validate:"required,min=3,max=100" gorm:"type:varchar(100);not null"`
 	Slug           string     `json:"slug" gorm:"type:varchar(50);uniqueIndex;not null"`
 	Logo           string     `json:"logo,omitempty" validate:"omitempty,url" gorm:"type:text"`

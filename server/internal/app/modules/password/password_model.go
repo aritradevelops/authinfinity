@@ -9,9 +9,9 @@ import (
 
 // implements Schema
 type Password struct {
-	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID uuid.UUID `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	// add your additional fields here
-	Name      string     `json:"name" validate:"required,min=3"`
+	Name string `json:"name" validate:"required,min=3"`
 	// system generated fields
 	AccountID uuid.UUID  `json:"account_id" validate:"required" gorm:"type:uuid;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`

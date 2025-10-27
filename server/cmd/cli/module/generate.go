@@ -190,16 +190,16 @@ func renderModule(mi moduleInput) error {
 
 	lg.Info("updated server.go successfully")
 	// Refresh migrate models/imports dynamically
-	if err := refreshMigrateModels(mi); err != nil {
+	if err := refreshAtlasProvider(mi); err != nil {
 		lg.Error("refresh migrate models failed", slog.Any("err", err))
 		return err
 	}
 	return nil
 }
 
-// refreshMigrateModels scans internal/app/modules and rewrites cmd/cli/migrate/migrate.go
+// refreshAtlasProvider scans internal/app/modules and rewrites cmd/cli/migrate/migrate.go
 // to import each module and populate the models slice accordingly.
-func refreshMigrateModels(mi moduleInput) error {
+func refreshAtlasProvider(mi moduleInput) error {
 	repoRoot, err := cliutil.FindRepoRoot(".")
 	if err != nil {
 		return err
@@ -226,8 +226,8 @@ func refreshMigrateModels(mi moduleInput) error {
 			lg.Info("found model", slog.String("pkg", name), slog.String("entity", entity))
 		}
 	}
-	// open migrate.go
-	migratePath := filepath.Join(repoRoot, "cmd", "cli", "migrate", "generate.go")
+	// open atlas provider
+	migratePath := filepath.Join(repoRoot, "cmd", "atlas-provider", "main.go")
 	fset := token.NewFileSet()
 	srcBytes, err := os.ReadFile(migratePath)
 	if err != nil {

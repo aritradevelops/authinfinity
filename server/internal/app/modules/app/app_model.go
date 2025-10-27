@@ -10,7 +10,7 @@ import (
 
 // App implements Schema
 type App struct {
-	ID                     uuid.UUID      `json:"id,omitempty" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	ID                     uuid.UUID      `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	Name                   string         `json:"name" validate:"required,min=3,max=100" gorm:"type:varchar(100);not null"`
 	Description            string         `json:"description,omitempty" validate:"omitempty,max=500" gorm:"type:text"`
 	LandingUrl             string         `json:"landing_url" validate:"required,url" gorm:"type:text;not null"`

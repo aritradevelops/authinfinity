@@ -9,7 +9,7 @@ import (
 
 // User implements Schema
 type User struct {
-	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	Name      string     `json:"name" validate:"required,min=3,max=100" gorm:"type:varchar(100);not null"`
 	Email     string     `json:"email" validate:"required,email" gorm:"type:varchar(255);uniqueIndex;not null"`
 	Dp        *string    `json:"dp,omitempty" validate:"omitempty,url" gorm:"type:text"`
