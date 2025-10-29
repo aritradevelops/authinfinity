@@ -7,11 +7,11 @@ import (
 
 func RegisterRoutes(router fiber.Router) {
 	controller := Controller()
-	{{.Package}}Router := router.Group("/{{.RouteGroup}}")
-	{{.Package}}Router.Use(core.SetModule("{{.Entity}}"))
-	{{.Package}}Router.Get("/list", controller.List)
-	{{.Package}}Router.Post("/create", controller.Create)
-	{{.Package}}Router.Get("/view/:id", controller.View)
-	{{.Package}}Router.Put("/update/:id", controller.Update)
-	{{.Package}}Router.Delete("/delete/:id", controller.Delete)
+	{{.Var}}Router := router.Group("/{{.RouteGroup}}")
+	{{.Var}}Router.Use(core.SetModule("{{.Entity}}"))
+	{{.Var}}Router.Get("/list", controller.List)
+	{{.Var}}Router.Post("/create", controller.Create)
+	{{.Var}}Router.Get("/view/:id", controller.View)
+	{{.Var}}Router.Put("/update/:id", controller.Update)
+	{{.Var}}Router.Delete("/delete/:id", controller.Delete)
 }

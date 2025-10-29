@@ -1,4 +1,4 @@
-package password
+package emailverificationrequest
 
 import (
 	"time"
@@ -8,11 +8,12 @@ import (
 )
 
 // implements Schema
-type Password struct {
+type EmailVerificationRequest struct {
 	ID uuid.UUID `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	// add your additional fields here
-	Password string    `json:"_"`
-	UserID   uuid.UUID `json:"user_id"`
+	Hash      string    `json:"hash" validate:"required,min=3"`
+	UserID    uuid.UUID `json:"user_id"`
+	ExpiredAt time.Time `json:"expired_at"`
 	// system generated fields
 	AccountID uuid.UUID  `json:"account_id" validate:"required" gorm:"type:uuid;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`
@@ -24,38 +25,38 @@ type Password struct {
 }
 
 func Model() core.Model {
-	return core.NewModel("passwords", []string{"name"})
+	return core.NewModel("email_verification_requests", []string{"name"})
 }
 
-func (u *Password) GetID() string {
+func (u *EmailVerificationRequest) GetID() string {
 	return u.ID.String()
 }
 
-func (u *Password) SetCreatedAt() {
+func (u *EmailVerificationRequest) SetCreatedAt() {
 	u.CreatedAt = time.Now().UTC()
 }
-func (u *Password) SetUpdatedAt() {
+func (u *EmailVerificationRequest) SetUpdatedAt() {
 	now := time.Now().UTC()
 	u.UpdatedAt = &now
 }
-func (u *Password) SetDeletedAt() {
+func (u *EmailVerificationRequest) SetDeletedAt() {
 	now := time.Now().UTC()
 	u.DeletedAt = &now
 }
-func (u *Password) SetCreatedBy(id string) {
+func (u *EmailVerificationRequest) SetCreatedBy(id string) {
 	u.CreatedBy, _ = uuid.Parse(id)
 }
-func (u *Password) SetUpdatedBy(id string) {
+func (u *EmailVerificationRequest) SetUpdatedBy(id string) {
 	uid, _ := uuid.Parse(id)
 	u.UpdatedBy = &uid
 }
-func (u *Password) SetDeletedBy(id string) {
+func (u *EmailVerificationRequest) SetDeletedBy(id string) {
 	uid, _ := uuid.Parse(id)
 	u.DeletedBy = &uid
 }
-func (u *Password) UnsetDeletedBy() {
+func (u *EmailVerificationRequest) UnsetDeletedBy() {
 	u.DeletedBy = nil
 }
-func (u *Password) SetAccountID(id string) {
+func (u *EmailVerificationRequest) SetAccountID(id string) {
 	u.AccountID, _ = uuid.Parse(id)
 }

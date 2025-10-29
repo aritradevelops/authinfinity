@@ -6,18 +6,18 @@ import (
 	"os"
 
 	"ariga.io/atlas-provider-gorm/gormschema"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/account"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/user"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/session"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/password"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/oauth"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/emailverificationrequest"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/auth"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/app"
-	"github.com/aritradevelops/authinfinity/server/internal/app/modules/password"
-	"github.com/aritradevelops/authinfinity/server/internal/app/modules/account"
 )
 
 // Models array - same as in migrate/generate.go
-var models = []any{&account.Account{}, &app.App{}, &auth.Auth{}, &oauth.Oauth{}, &password.Password{}, &session.Session{}, &user.User{},
-}
+var models = []any{&account.Account{}, &app.App{}, &auth.Auth{}, &emailverificationrequest.EmailVerificationRequest{}, &oauth.Oauth{}, &password.Password{}, &session.Session{}, &user.User{}}
 
 func main() {
 	stmts, err := gormschema.New("postgres").Load(models...)

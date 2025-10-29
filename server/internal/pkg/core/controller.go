@@ -28,33 +28,18 @@ func NewController[S Schema](service Service[S]) Controller[S] {
 }
 
 func (bc *BaseController[S]) List(c *fiber.Ctx) error {
-	listOpts, err := NewListOptions(c)
+	result, err := bc.service.List(c)
 	if err != nil {
-		return NewBadRequestError()
-	}
-	result, err := bc.service.List(c, listOpts)
-	if err != nil {
-		return NewInternalServerError()
+		return err
 	}
 	return c.JSON(response.NewServerResponse(translator.Localize(c, "controller.list", map[string]string{"Entity": c.Locals("module").(string)}), result.Data, result.Info))
 }
 
 func (bc *BaseController[S]) Create(c *fiber.Ctx) error {
-	var data S
-	err := c.BodyParser(&data)
+	id, err := bc.service.Create(c)
 	if err != nil {
 		fmt.Printf("Error : %+v", err)
-		return NewBadRequestError()
-	}
-	errs := Validate(data, c)
-	if errs != nil {
-		fmt.Printf("Error : %+v", err)
-		return NewRequestValidationError(errs)
-	}
-	id, err := bc.service.Create(c, data)
-	if err != nil {
-		fmt.Printf("Error : %+v", err)
-		return NewInternalServerError()
+		return err
 	}
 
 	c.Status(http.StatusCreated)
@@ -66,21 +51,10 @@ func (bc *BaseController[S]) Create(c *fiber.Ctx) error {
 	)
 }
 func (bc *BaseController[S]) Update(c *fiber.Ctx) error {
-	var data S
-	err := c.BodyParser(&data)
+	acknowledged, err := bc.service.Update(c)
 	if err != nil {
 		fmt.Printf("Error : %+v", err)
-		return NewBadRequestError()
-	}
-	errs := Validate(data, c)
-	if errs != nil {
-		fmt.Printf("Error : %+v", err)
-		return NewRequestValidationError(errs)
-	}
-	acknowledged, err := bc.service.Update(c, c.Params("id"), data)
-	if err != nil {
-		fmt.Printf("Error : %+v", err)
-		return NewInternalServerError()
+		return err
 	}
 	return c.JSON(
 		response.NewServerResponse(
@@ -90,10 +64,10 @@ func (bc *BaseController[S]) Update(c *fiber.Ctx) error {
 	)
 }
 func (bc *BaseController[S]) View(c *fiber.Ctx) error {
-	data, err := bc.service.View(c, c.Params("id"))
+	data, err := bc.service.View(c)
 	if err != nil {
 		fmt.Printf("Error : %+v", err)
-		return NewInternalServerError()
+		return err
 	}
 
 	return c.JSON(
@@ -105,10 +79,10 @@ func (bc *BaseController[S]) View(c *fiber.Ctx) error {
 }
 
 func (bc *BaseController[S]) Delete(c *fiber.Ctx) error {
-	data, err := bc.service.Delete(c, c.Params("id"))
+	data, err := bc.service.Delete(c)
 	if err != nil {
 		fmt.Printf("Error: %+v", err)
-		return NewInternalServerError()
+		return err
 	}
 	return c.JSON(
 		response.NewServerResponse(

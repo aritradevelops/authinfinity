@@ -11,8 +11,8 @@ type {{.Entity}}Repository struct {
 
 
 func Repository() *{{.Entity}}Repository {
-	var {{.Package}}Model = Model()
+	var {{.Var}}Model = Model()
 	return &{{.Entity}}Repository{
-		Repository: core.NewRepository[*{{.Entity}}]({{.Package}}Model, db.Instance()),
+		Repository: core.NewRepository[*{{.Entity}}]({{.Var}}Model, db.Instance()),
 	}
 }

@@ -6,10 +6,12 @@ import (
 )
 
 type Env struct {
-	Port            int             `env:"PORT" envDefault:"8080"`
-	DBConnectionURI string          `env:"DB_CONNECTION_URI,required"`
-	DBKind          db.DatabaseKind `env:"DB_KIND,required"`
-	ServiceName     string          `env:"SERVICE_NAME" envDefault:"Authone Backend"`
+	Port                        int             `env:"PORT" envDefault:"8080"`
+	DBConnectionURI             string          `env:"DB_CONNECTION_URI,required"`
+	DBKind                      db.DatabaseKind `env:"DB_KIND,required"`
+	ServiceName                 string          `env:"SERVICE_NAME" envDefault:"Authone Backend"`
+	BaseDomain                  string          `env:"BASE_DOMAIN,required"`
+	EmailVerificationHashExpiry string          `env:"EMAIL_VERIFICATION_HASH_EXPIRY"`
 }
 
 type Config struct {

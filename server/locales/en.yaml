@@ -13,6 +13,7 @@ controller:
   update: "{{.Entity}} updated successfully."
   view: "{{.Entity}} fetched successfully."
   delete: "{{.Entity}} deleted successfully."
-validation: 
+validation:
   required: "The {{.Field}} is required."
   min: "The {{.Field}} must be of length {{.Param}} or more."
+  unique: "The {{.Field}} must be unique."

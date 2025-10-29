@@ -14,9 +14,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/ettle/strcase"
 	"github.com/spf13/cobra"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"golang.org/x/tools/go/ast/astutil"
 
 	pluralizer "github.com/gertd/go-pluralize"
@@ -37,6 +36,8 @@ type moduleInput struct {
 	Collection string
 	RouteGroup string
 	ModulePath string
+	File       string
+	Var        string
 }
 
 func buildNames(raw string) (moduleInput, error) {
@@ -54,14 +55,19 @@ func buildNames(raw string) (moduleInput, error) {
 		return moduleInput{}, err
 	}
 	pkg := strings.ToLower(trimmed)
-	entity := cases.Title(language.English).String(strings.ToLower(trimmed))
-	collection := pluralize.Plural(pkg)
+	entity := trimmed
+	fileName := strcase.ToSnake(trimmed)
+	collection := pluralize.Plural(fileName)
+	routeGroup := strcase.ToKebab(collection)
+	varName := strcase.ToCamel(entity)
 	return moduleInput{
 		Raw:        trimmed,
 		Package:    pkg,
 		Entity:     entity,
 		Collection: collection,
-		RouteGroup: collection,
+		RouteGroup: routeGroup,
+		File:       fileName,
+		Var:        varName,
 		ModulePath: mp,
 	}, nil
 }
@@ -87,14 +93,16 @@ func renderModule(mi moduleInput) error {
 		"Collection": mi.Collection,
 		"RouteGroup": mi.RouteGroup,
 		"ModulePath": mi.ModulePath,
+		"Var":        mi.Var,
+		"File":       mi.File,
 	}
 
 	files := map[string]string{
-		"model.tmpl":      filepath.Join(baseDir, mi.Package+"_model.go"),
-		"repository.tmpl": filepath.Join(baseDir, mi.Package+"_repository.go"),
-		"service.tmpl":    filepath.Join(baseDir, mi.Package+"_service.go"),
-		"controller.tmpl": filepath.Join(baseDir, mi.Package+"_controller.go"),
-		"router.tmpl":     filepath.Join(baseDir, mi.Package+"_router.go"),
+		"model.tmpl":      filepath.Join(baseDir, mi.File+"_model.go"),
+		"repository.tmpl": filepath.Join(baseDir, mi.File+"_repository.go"),
+		"service.tmpl":    filepath.Join(baseDir, mi.File+"_service.go"),
+		"controller.tmpl": filepath.Join(baseDir, mi.File+"_controller.go"),
+		"router.tmpl":     filepath.Join(baseDir, mi.File+"_router.go"),
 	}
 
 	for tmplName, outPath := range files {
@@ -219,11 +227,30 @@ func refreshAtlasProvider(mi moduleInput) error {
 			continue
 		}
 		name := d.Name()
-		modelPath := filepath.Join(modulesDir, name, fmt.Sprintf("%s_model.go", name))
+		files, err := os.ReadDir(filepath.Join(modulesDir, name))
+		if err != nil {
+			return err
+		}
+
+		modelFileName := ""
+		model := ""
+		for _, f := range files {
+			if f.IsDir() {
+				continue
+			}
+			if strings.HasSuffix(f.Name(), "_model.go") {
+				modelFileName = f.Name()
+				model = strings.TrimSuffix(f.Name(), "_model.go")
+			}
+		}
+		if model == "" {
+			continue
+		}
+
+		modelPath := filepath.Join(modulesDir, name, modelFileName)
 		if _, err := os.Stat(modelPath); err == nil {
-			entity := cases.Title(language.English).String(strings.ToLower(name))
-			found = append(found, mod{pkg: name, entity: entity, importPath: fmt.Sprintf("%s/internal/app/modules/%s", mi.ModulePath, name)})
-			lg.Info("found model", slog.String("pkg", name), slog.String("entity", entity))
+			found = append(found, mod{pkg: name, entity: strcase.ToPascal(model), importPath: fmt.Sprintf("%s/internal/app/modules/%s", mi.ModulePath, name)})
+			lg.Info("found model", slog.String("pkg", name), slog.String("entity", strcase.ToPascal(model)))
 		}
 	}
 	// open atlas provider

@@ -6,9 +6,10 @@ import (
 )
 
 func RegisterRoutes(router fiber.Router) {
-	// controller := Controller()
+	controller := Controller()
 	authRouter := router.Group("/auth")
 	authRouter.Use(core.SetModule("Auth"))
+	authRouter.Post("/register", controller.Register)
 	// authRouter.Get("/list", controller.List)
 	// authRouter.Post("/create", controller.Create)
 	// authRouter.Get("/view/:id", controller.View)

@@ -1,9 +1,16 @@
 package core
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/aritradevelops/authinfinity/server/internal/middlewares/translator"
+	"github.com/aritradevelops/authinfinity/server/internal/pkg/validator"
+	"github.com/gofiber/fiber/v2"
+)
 
 type ErrorInfo struct {
-	ValidationErrors []ValidationError `json:"validation_errors,omitempty"`
+	ValidationErrors []validator.ValidationError `json:"validation_errors,omitempty"`
 }
 
 // implements error
@@ -13,43 +20,53 @@ type HttpError struct {
 	Info       ErrorInfo
 }
 
-var errorMap = map[int]string{
-	http.StatusInternalServerError: "Something went wrong!",
-	http.StatusNotFound:            "Nothing right here.",
-	http.StatusBadRequest:          "The request is invalid",
-	http.StatusForbidden:           "You are not authorized to access this resource",
-	http.StatusUnprocessableEntity: "The given data does not satisfy the constraints",
-}
-
 func (e HttpError) Error() string {
 	return e.Message
 }
 
-func NewInternalServerError() HttpError {
+func NewInternalServerError(c *fiber.Ctx) HttpError {
 	return HttpError{
-		Message:    errorMap[http.StatusInternalServerError],
+		Message:    translator.Localize(c, fmt.Sprintf("errors.%d", http.StatusInternalServerError)),
 		StatusCode: http.StatusInternalServerError,
 	}
 }
-func NewNotFoundError() HttpError {
+
+func NewNotFoundError(c *fiber.Ctx) HttpError {
 	return HttpError{
-		Message:    errorMap[http.StatusNotFound],
+		Message:    translator.Localize(c, fmt.Sprintf("errors.%d", http.StatusNotFound)),
 		StatusCode: http.StatusNotFound,
 	}
 }
-func NewBadRequestError() HttpError {
+
+func NewBadRequestError(c *fiber.Ctx) HttpError {
 	return HttpError{
-		Message:    errorMap[http.StatusBadRequest],
+		Message:    translator.Localize(c, fmt.Sprintf("errors.%d", http.StatusBadRequest)),
 		StatusCode: http.StatusBadRequest,
 	}
 }
 
-func NewRequestValidationError(errors []ValidationError) HttpError {
+func NewRequestValidationError(c *fiber.Ctx, errors []validator.ValidationError) HttpError {
 	return HttpError{
-		Message:    errorMap[http.StatusUnprocessableEntity],
+		Message:    translator.Localize(c, fmt.Sprintf("errors.%d", http.StatusUnprocessableEntity)),
 		StatusCode: http.StatusUnprocessableEntity,
 		Info: ErrorInfo{
 			ValidationErrors: errors,
 		},
+	}
+}
+
+func NewConflictError(c *fiber.Ctx) HttpError {
+	return HttpError{
+		Message:    translator.Localize(c, fmt.Sprintf("errors.%d", http.StatusConflict)),
+		StatusCode: http.StatusConflict,
+	}
+}
+
+func NewDuplicateKeyError(c *fiber.Ctx, key string) HttpError {
+	return HttpError{
+		Message: translator.Localize(c, "validation.unique", map[string]string{
+			"Field": key,
+		}),
+		StatusCode: http.StatusConflict,
 	}
 }
