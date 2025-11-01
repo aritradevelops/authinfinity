@@ -6,10 +6,5 @@ type PasswordController struct {
 	core.Controller[*Password]
 }
 
+var passwordController  *PasswordController
 
-func Controller() *PasswordController {
-	var passwordService = Service()
-	return &PasswordController{
-		Controller: core.NewController(core.Service[*Password](passwordService)),
-	}
-}

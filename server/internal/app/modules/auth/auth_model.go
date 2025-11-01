@@ -10,7 +10,10 @@ import (
 // implements Schema
 type Auth struct {
 	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
+	// add your additional fields here
 	Name      string     `json:"name" validate:"required,min=3"`
+	// system generated fields
+	AccountID uuid.UUID  `json:"account_id" validate:"required" gorm:"type:uuid;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`
 	CreatedBy uuid.UUID  `json:"created_by" gorm:"type:uuid"`
 	UpdatedAt *time.Time `json:"updated_at" gorm:"autoUpdateTime:false"`
@@ -19,8 +22,11 @@ type Auth struct {
 	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:uuid"`
 }
 
+var authModel core.Model
+
+
 func Model() core.Model {
-	return core.NewModel("auths", []string{"name"})
+	return authModel 
 }
 
 func (u *Auth) GetID() string {
@@ -51,4 +57,7 @@ func (u *Auth) SetDeletedBy(id string) {
 }
 func (u *Auth) UnsetDeletedBy() {
 	u.DeletedBy = nil
+}
+func (u *Auth) SetAccountID(id string) {
+	u.AccountID, _ = uuid.Parse(id)
 }

@@ -2,17 +2,15 @@ package {{.Package}}
 
 import (
 	"{{.ModulePath}}/internal/pkg/core"
-	"{{.ModulePath}}/internal/pkg/db"
 )
 
 type {{.Entity}}Repository struct {
 	core.Repository[*{{.Entity}}]
 }
 
+var {{.Var}}Repository *{{.Entity}}Repository 
 
 func Repository() *{{.Entity}}Repository {
-	var {{.Var}}Model = Model()
-	return &{{.Entity}}Repository{
-		Repository: core.NewRepository[*{{.Entity}}]({{.Var}}Model, db.Instance()),
-	}
+	return {{.Var}}Repository 
 }
+	

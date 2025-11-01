@@ -1,4 +1,4 @@
-package session
+package session 
 
 import (
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/core"
@@ -8,9 +8,8 @@ type SessionService struct {
 	core.Service[*Session]
 }
 
+var sessionService *SessionService
+
 func Service() *SessionService {
-	var sessionRepository = Repository()
-	return &SessionService{
-		Service: core.NewService(core.Repository[*Session](sessionRepository)),
-	}
+	return sessionService
 }

@@ -8,10 +8,8 @@ type {{.Entity}}Service struct {
 	core.Service[*{{.Entity}}]
 }
 
+var {{.Var}}Service *{{.Entity}}Service
 
 func Service() *{{.Entity}}Service {
-	var {{.Var}}Repository = Repository()
-	return &{{.Entity}}Service{
-		Service: core.NewService(core.Repository[*{{.Entity}}]({{.Var}}Repository)),
-	}
+	return {{.Var}}Service
 }

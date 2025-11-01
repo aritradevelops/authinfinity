@@ -22,8 +22,11 @@ type {{.Entity}} struct {
 	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:uuid"`
 }
 
+var {{.Var}}Model core.Model
+
+
 func Model() core.Model {
-	return core.NewModel("{{.Collection}}", []string{"name"})
+	return {{.Var}}Model 
 }
 
 func (u *{{.Entity}}) GetID() string {

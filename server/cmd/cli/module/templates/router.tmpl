@@ -1,17 +1,38 @@
 package {{.Package}} 
 
 import (
+	"fmt"
 	"{{.ModulePath}}/internal/pkg/core"
 	"github.com/gofiber/fiber/v2"
+	"{{.ModulePath}}/internal/pkg/db"
+	"github.com/aritradevelops/authinfinity/server/internal/authn"
 )
 
+func setup() {
+	{{.Var}}Model = core.NewModel("{{.Collection}}", []string{"name"})
+
+	{{.Var}}Repository = &{{.Entity}}Repository{
+		Repository: core.NewRepository[*{{.Entity}}]({{.Var}}Model, db.Instance()),
+	}
+
+	{{.Var}}Service = &{{.Entity}}Service{
+		Service: core.NewService(core.Repository[*{{.Entity}}]({{.Var}}Repository)),
+	}
+
+	{{.Var}}Controller = &{{.Entity}}Controller{
+		Controller: core.NewController(core.Service[*{{.Entity}}]({{.Var}}Service)),
+	}
+
+}
+
 func RegisterRoutes(router fiber.Router) {
-	controller := Controller()
+	setup()
+	fmt.Println("Module: {{.Entity}} is registered successfully")
 	{{.Var}}Router := router.Group("/{{.RouteGroup}}")
-	{{.Var}}Router.Use(core.SetModule("{{.Entity}}"))
-	{{.Var}}Router.Get("/list", controller.List)
-	{{.Var}}Router.Post("/create", controller.Create)
-	{{.Var}}Router.Get("/view/:id", controller.View)
-	{{.Var}}Router.Put("/update/:id", controller.Update)
-	{{.Var}}Router.Delete("/delete/:id", controller.Delete)
+	{{.Var}}Router.Use(core.SetModule("{{.Entity}}"), authn.AuthMiddleware())
+	{{.Var}}Router.Get("/list", {{.Var}}Controller.List)
+	{{.Var}}Router.Post("/create", {{.Var}}Controller.Create)
+	{{.Var}}Router.Get("/view/:id", {{.Var}}Controller.View)
+	{{.Var}}Router.Put("/update/:id", {{.Var}}Controller.Update)
+	{{.Var}}Router.Delete("/delete/:id", {{.Var}}Controller.Delete)
 }

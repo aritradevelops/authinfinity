@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/aritradevelops/authinfinity/server/internal/auth"
+	"github.com/aritradevelops/authinfinity/server/internal/authn"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -42,7 +42,7 @@ func (s *BaseService[S]) Create(c *fiber.Ctx) (string, error) {
 		fmt.Printf("Error : %+v", err)
 		return "", NewBadRequestError(c)
 	}
-	authUser, err := auth.GetAuthUser(c)
+	authUser, err := authn.GetAuthUser(c)
 	if err == nil {
 		data.SetCreatedAt()
 		data.SetCreatedBy(authUser.ID)
@@ -70,7 +70,7 @@ func (s *BaseService[S]) Update(c *fiber.Ctx) (bool, error) {
 		fmt.Printf("Error : %+v", err)
 		return false, NewBadRequestError(c)
 	}
-	authUser, err := auth.GetAuthUser(c)
+	authUser, err := authn.GetAuthUser(c)
 	if err == nil {
 		data.SetUpdatedAt()
 		data.SetUpdatedBy(authUser.ID)
@@ -102,7 +102,7 @@ func (s *BaseService[S]) Delete(c *fiber.Ctx) (bool, error) {
 	id := c.Params("id")
 	schema := reflect.New(reflect.TypeFor[S]().Elem())
 	data := schema.Interface().(S)
-	authUser, err := auth.GetAuthUser(c)
+	authUser, err := authn.GetAuthUser(c)
 	if err == nil {
 		data.SetDeletedAt()
 		data.SetDeletedBy(authUser.ID)

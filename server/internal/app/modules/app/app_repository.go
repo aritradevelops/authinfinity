@@ -1,17 +1,16 @@
-package app
+package app 
 
 import (
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/core"
-	"github.com/aritradevelops/authinfinity/server/internal/pkg/db"
 )
 
 type AppRepository struct {
 	core.Repository[*App]
 }
 
+var appRepository *AppRepository 
+
 func Repository() *AppRepository {
-	var appModel = Model()
-	return &AppRepository{
-		Repository: core.NewRepository[*App](appModel, db.Instance()),
-	}
+	return appRepository 
 }
+	

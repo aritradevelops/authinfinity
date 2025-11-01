@@ -6,9 +6,5 @@ type SessionController struct {
 	core.Controller[*Session]
 }
 
-func Controller() *SessionController {
-	var sessionService = Service()
-	return &SessionController{
-		Controller: core.NewController(core.Service[*Session](sessionService)),
-	}
-}
+var sessionController  *SessionController
+

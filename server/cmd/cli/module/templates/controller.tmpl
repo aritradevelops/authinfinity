@@ -6,10 +6,5 @@ type {{.Entity}}Controller struct {
 	core.Controller[*{{.Entity}}]
 }
 
+var {{.Var}}Controller  *{{.Entity}}Controller
 
-func Controller() *{{.Entity}}Controller {
-	var {{.Var}}Service = Service()
-	return &{{.Entity}}Controller{
-		Controller: core.NewController(core.Service[*{{.Entity}}]({{.Var}}Service)),
-	}
-}

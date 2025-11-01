@@ -19,8 +19,7 @@ func Bootstrap() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%+v\n", conf)
-	database := db.New(conf.Env.DBConnectionURI, conf.Env.DBKind)
+	database := db.New(conf.Env.DBConnectionURI, db.DatabaseKind(conf.Env.DBKind))
 	err = database.Connect()
 	if err != nil {
 		return err

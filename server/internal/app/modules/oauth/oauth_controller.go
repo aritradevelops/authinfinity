@@ -6,9 +6,5 @@ type OauthController struct {
 	core.Controller[*Oauth]
 }
 
-func Controller() *OauthController {
-	var oauthService = Service()
-	return &OauthController{
-		Controller: core.NewController(core.Service[*Oauth](oauthService)),
-	}
-}
+var oauthController  *OauthController
+

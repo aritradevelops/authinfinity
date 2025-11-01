@@ -1,9 +1,8 @@
 package errorhandler
 
 import (
-	"log"
+	"fmt"
 	"net/http"
-	"runtime/debug"
 
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/core"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/response"
@@ -13,7 +12,7 @@ import (
 func New() fiber.ErrorHandler {
 	return func(c *fiber.Ctx, err error) error {
 
-		log.Printf("Error: %v\nStack Trace:\n%s", err, debug.Stack())
+		fmt.Print(err.Error())
 		if httpErr, ok := err.(core.HttpError); ok {
 			return c.Status(httpErr.StatusCode).JSON(response.NewServerResponse(httpErr.Message, nil, httpErr.Info))
 		}

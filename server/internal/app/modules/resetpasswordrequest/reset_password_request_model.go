@@ -1,4 +1,4 @@
-package session
+package resetpasswordrequest
 
 import (
 	"time"
@@ -8,7 +8,7 @@ import (
 )
 
 // implements Schema
-type Session struct {
+type ResetPasswordRequest struct {
 	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	// add your additional fields here
 	Name      string     `json:"name" validate:"required,min=3"`
@@ -22,42 +22,42 @@ type Session struct {
 	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:uuid"`
 }
 
-var sessionModel core.Model
+var resetPasswordRequestModel core.Model
 
 
 func Model() core.Model {
-	return sessionModel 
+	return resetPasswordRequestModel 
 }
 
-func (u *Session) GetID() string {
+func (u *ResetPasswordRequest) GetID() string {
 	return u.ID.String()
 }
 
-func (u *Session) SetCreatedAt() {
+func (u *ResetPasswordRequest) SetCreatedAt() {
 	u.CreatedAt = time.Now().UTC()
 }
-func (u *Session) SetUpdatedAt() {
+func (u *ResetPasswordRequest) SetUpdatedAt() {
 	now := time.Now().UTC()
 	u.UpdatedAt = &now
 }
-func (u *Session) SetDeletedAt() {
+func (u *ResetPasswordRequest) SetDeletedAt() {
 	now := time.Now().UTC()
 	u.DeletedAt = &now
 }
-func (u *Session) SetCreatedBy(id string) {
+func (u *ResetPasswordRequest) SetCreatedBy(id string) {
 	u.CreatedBy, _ = uuid.Parse(id)
 }
-func (u *Session) SetUpdatedBy(id string) {
+func (u *ResetPasswordRequest) SetUpdatedBy(id string) {
 	uid, _ := uuid.Parse(id)
 	u.UpdatedBy = &uid
 }
-func (u *Session) SetDeletedBy(id string) {
+func (u *ResetPasswordRequest) SetDeletedBy(id string) {
 	uid, _ := uuid.Parse(id)
 	u.DeletedBy = &uid
 }
-func (u *Session) UnsetDeletedBy() {
+func (u *ResetPasswordRequest) UnsetDeletedBy() {
 	u.DeletedBy = nil
 }
-func (u *Session) SetAccountID(id string) {
+func (u *ResetPasswordRequest) SetAccountID(id string) {
 	u.AccountID, _ = uuid.Parse(id)
 }

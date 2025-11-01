@@ -6,10 +6,5 @@ type EmailVerificationRequestController struct {
 	core.Controller[*EmailVerificationRequest]
 }
 
+var emailVerificationRequestController  *EmailVerificationRequestController
 
-func Controller() *EmailVerificationRequestController {
-	var emailVerificationRequestService = Service()
-	return &EmailVerificationRequestController{
-		Controller: core.NewController(core.Service[*EmailVerificationRequest](emailVerificationRequestService)),
-	}
-}

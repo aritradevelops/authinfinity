@@ -6,9 +6,5 @@ type AccountController struct {
 	core.Controller[*Account]
 }
 
-func Controller() *AccountController {
-	var accountService = Service()
-	return &AccountController{
-		Controller: core.NewController(core.Service[*Account](accountService)),
-	}
-}
+var accountController  *AccountController
+

@@ -9,10 +9,9 @@ import (
 
 // implements Schema
 type Password struct {
-	ID uuid.UUID `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
+	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	// add your additional fields here
-	Password string    `json:"_"`
-	UserID   uuid.UUID `json:"user_id"`
+	Name      string     `json:"name" validate:"required,min=3"`
 	// system generated fields
 	AccountID uuid.UUID  `json:"account_id" validate:"required" gorm:"type:uuid;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`
@@ -23,8 +22,11 @@ type Password struct {
 	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:uuid"`
 }
 
+var passwordModel core.Model
+
+
 func Model() core.Model {
-	return core.NewModel("passwords", []string{"name"})
+	return passwordModel 
 }
 
 func (u *Password) GetID() string {

@@ -8,10 +8,8 @@ type PasswordService struct {
 	core.Service[*Password]
 }
 
+var passwordService *PasswordService
 
 func Service() *PasswordService {
-	var passwordRepository = Repository()
-	return &PasswordService{
-		Service: core.NewService(core.Repository[*Password](passwordRepository)),
-	}
+	return passwordService
 }

@@ -106,7 +106,6 @@ func newRemoveCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "remove:modules <module_names...>",
 		Short: "Remove modules",
-		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			lg.Info("starting module removal", slog.Int("count", len(args)))
 			for _, raw := range args {

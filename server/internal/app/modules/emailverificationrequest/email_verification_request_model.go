@@ -9,11 +9,9 @@ import (
 
 // implements Schema
 type EmailVerificationRequest struct {
-	ID uuid.UUID `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
+	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	// add your additional fields here
-	Hash      string    `json:"hash" validate:"required,min=3"`
-	UserID    uuid.UUID `json:"user_id"`
-	ExpiredAt time.Time `json:"expired_at"`
+	Name      string     `json:"name" validate:"required,min=3"`
 	// system generated fields
 	AccountID uuid.UUID  `json:"account_id" validate:"required" gorm:"type:uuid;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`
@@ -24,8 +22,11 @@ type EmailVerificationRequest struct {
 	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:uuid"`
 }
 
+var emailVerificationRequestModel core.Model
+
+
 func Model() core.Model {
-	return core.NewModel("email_verification_requests", []string{"name"})
+	return emailVerificationRequestModel 
 }
 
 func (u *EmailVerificationRequest) GetID() string {

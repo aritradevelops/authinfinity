@@ -1,17 +1,38 @@
 package password 
 
 import (
+	"fmt"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/core"
 	"github.com/gofiber/fiber/v2"
+	"github.com/aritradevelops/authinfinity/server/internal/pkg/db"
+	"github.com/aritradevelops/authinfinity/server/internal/authn"
 )
 
+func setup() {
+	passwordModel = core.NewModel("passwords", []string{"name"})
+
+	passwordRepository = &PasswordRepository{
+		Repository: core.NewRepository[*Password](passwordModel, db.Instance()),
+	}
+
+	passwordService = &PasswordService{
+		Service: core.NewService(core.Repository[*Password](passwordRepository)),
+	}
+
+	passwordController = &PasswordController{
+		Controller: core.NewController(core.Service[*Password](passwordService)),
+	}
+
+}
+
 func RegisterRoutes(router fiber.Router) {
-	controller := Controller()
+	setup()
+	fmt.Println("Module: Password is registered successfully")
 	passwordRouter := router.Group("/passwords")
-	passwordRouter.Use(core.SetModule("Password"))
-	passwordRouter.Get("/list", controller.List)
-	passwordRouter.Post("/create", controller.Create)
-	passwordRouter.Get("/view/:id", controller.View)
-	passwordRouter.Put("/update/:id", controller.Update)
-	passwordRouter.Delete("/delete/:id", controller.Delete)
+	passwordRouter.Use(core.SetModule("Password"), authn.AuthMiddleware())
+	passwordRouter.Get("/list", passwordController.List)
+	passwordRouter.Post("/create", passwordController.Create)
+	passwordRouter.Get("/view/:id", passwordController.View)
+	passwordRouter.Put("/update/:id", passwordController.Update)
+	passwordRouter.Delete("/delete/:id", passwordController.Delete)
 }

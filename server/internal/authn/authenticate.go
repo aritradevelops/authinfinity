@@ -1,4 +1,4 @@
-package auth
+package authn
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ type AuthUser struct {
 func AuthMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		c.Locals(authKey, &AuthUser{
-			ID:        "9c35b66c-bf36-4466-b793-4ded5128b8de",
+			ID:        "c4c3a079-15a0-4d73-93fb-7d26269a5206",
 			AccountID: "c4c3a079-15a0-4d73-93fb-7d26269a5206",
 		})
 		return c.Next()

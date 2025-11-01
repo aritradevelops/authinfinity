@@ -28,6 +28,7 @@ func NewController[S Schema](service Service[S]) Controller[S] {
 }
 
 func (bc *BaseController[S]) List(c *fiber.Ctx) error {
+	fmt.Println("here im", bc.service)
 	result, err := bc.service.List(c)
 	if err != nil {
 		return err

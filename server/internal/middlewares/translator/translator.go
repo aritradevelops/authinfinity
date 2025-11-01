@@ -1,7 +1,6 @@
 package translator
 
 import (
-	"fmt"
 	"os"
 	"path"
 
@@ -15,7 +14,6 @@ import (
 func New() fiber.Handler {
 	cwd, _ := os.Getwd()
 	localesPath := path.Join(cwd, "locales")
-	fmt.Println(localesPath)
 	return fiberi18n.New(&fiberi18n.Config{
 		RootPath:         localesPath,
 		AcceptLanguages:  []language.Tag{language.English, language.Bengali},

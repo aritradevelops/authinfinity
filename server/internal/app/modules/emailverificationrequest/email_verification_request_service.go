@@ -8,10 +8,8 @@ type EmailVerificationRequestService struct {
 	core.Service[*EmailVerificationRequest]
 }
 
+var emailVerificationRequestService *EmailVerificationRequestService
 
 func Service() *EmailVerificationRequestService {
-	var emailVerificationRequestRepository = Repository()
-	return &EmailVerificationRequestService{
-		Service: core.NewService(core.Repository[*EmailVerificationRequest](emailVerificationRequestRepository)),
-	}
+	return emailVerificationRequestService
 }

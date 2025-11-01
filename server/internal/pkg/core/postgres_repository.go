@@ -14,7 +14,6 @@ type PostgresRepository[S Schema] struct {
 }
 
 func NewPostgresRepository[S Schema](model Model, database db.Database) Repository[S] {
-	fmt.Println(database)
 	gormDb, ok := database.(*db.Postgres)
 	if !ok {
 		panic("Invalid db.Database passed to NewPostgresRepository, it only accepts *db.Postgres")

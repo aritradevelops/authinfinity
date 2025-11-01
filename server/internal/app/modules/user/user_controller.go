@@ -6,9 +6,5 @@ type UserController struct {
 	core.Controller[*User]
 }
 
-func Controller() *UserController {
-	var userService = Service()
-	return &UserController{
-		Controller: core.NewController(core.Service[*User](userService)),
-	}
-}
+var userController  *UserController
+

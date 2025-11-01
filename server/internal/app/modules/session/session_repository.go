@@ -1,17 +1,16 @@
-package session
+package session 
 
 import (
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/core"
-	"github.com/aritradevelops/authinfinity/server/internal/pkg/db"
 )
 
 type SessionRepository struct {
 	core.Repository[*Session]
 }
 
+var sessionRepository *SessionRepository 
+
 func Repository() *SessionRepository {
-	var sessionModel = Model()
-	return &SessionRepository{
-		Repository: core.NewRepository[*Session](sessionModel, db.Instance()),
-	}
+	return sessionRepository 
 }
+	

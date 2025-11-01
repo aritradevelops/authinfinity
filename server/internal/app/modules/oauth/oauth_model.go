@@ -10,11 +10,10 @@ import (
 // implements Schema
 type Oauth struct {
 	ID        uuid.UUID  `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
-	UserID    uuid.UUID  `json:"user_id" gorm:"type:uuid" validate:"required"`
-	AppID     uuid.UUID  `json:"app_id" gorm:"type:uuid" validate:"required"`
-	AccountID uuid.UUID  `json:"account_id" gorm:"type:uuid" validate:"required"`
-	Code      string     `json:"code" validate:"required"`
-	ExpiresAt time.Time  `json:"expires_at" validate:"required"`
+	// add your additional fields here
+	Name      string     `json:"name" validate:"required,min=3"`
+	// system generated fields
+	AccountID uuid.UUID  `json:"account_id" validate:"required" gorm:"type:uuid;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`
 	CreatedBy uuid.UUID  `json:"created_by" gorm:"type:uuid"`
 	UpdatedAt *time.Time `json:"updated_at" gorm:"autoUpdateTime:false"`
@@ -23,8 +22,11 @@ type Oauth struct {
 	DeletedBy *uuid.UUID `json:"deleted_by" gorm:"type:uuid"`
 }
 
+var oauthModel core.Model
+
+
 func Model() core.Model {
-	return core.NewModel("oauths", []string{"name"})
+	return oauthModel 
 }
 
 func (u *Oauth) GetID() string {
@@ -56,7 +58,6 @@ func (u *Oauth) SetDeletedBy(id string) {
 func (u *Oauth) UnsetDeletedBy() {
 	u.DeletedBy = nil
 }
-
 func (u *Oauth) SetAccountID(id string) {
 	u.AccountID, _ = uuid.Parse(id)
 }

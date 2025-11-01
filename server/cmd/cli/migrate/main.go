@@ -44,7 +44,7 @@ func newMigrateDiffCommand() *cobra.Command {
 				"diff",
 				migrationName,
 				"--config", "file://atlas.hcl",
-				"--env", "local",
+				"--env", "gorm",
 			)
 		},
 	}
@@ -67,7 +67,7 @@ func newMigrateApplyCommand() *cobra.Command {
 			)
 		},
 	}
-	cmd.Flags().String("env", "local", "Environment to use (local, dev, prod)")
+	cmd.Flags().String("env", "dev", "Environment to use (local, dev, prod)")
 	return cmd
 }
 
@@ -146,7 +146,7 @@ func newSchemaApplyCommand() *cobra.Command {
 			return runAtlasCommand(args...)
 		},
 	}
-	cmd.Flags().String("env", "local", "Environment to use (local, dev)")
+	cmd.Flags().String("env", "gorm", "Environment to use (gorm, local)")
 	cmd.Flags().Bool("auto-approve", false, "Auto approve changes without prompt")
 	return cmd
 }
