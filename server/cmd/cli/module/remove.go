@@ -2,29 +2,29 @@ package module
 
 import (
 	"fmt"
-	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
-	"log/slog"
 	"os"
 	"path/filepath"
 
+	"github.com/aritradevelops/authinfinity/server/internal/pkg/logger"
 	"github.com/spf13/cobra"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func deleteModule(mi moduleInput) error {
+func removeModule(mi moduleInput) error {
 	baseDir := filepath.Join("internal", "app", "modules", mi.Package)
-	lg.Info("removing module directory", slog.String("dir", baseDir))
+	logger.Info().Str("dir", baseDir).Msg("removing module directory")
+
 	if err := os.RemoveAll(baseDir); err != nil {
-		return err
+		return fmt.Errorf("remove module directory: %w", err)
 	}
 
 	serverPath := filepath.Join("internal", "pkg", "server", "server.go")
-	lg.Info("updating server AST to remove routes", slog.String("path", serverPath))
-	fset := token.NewFileSet()
+	logger.Info().Str("path", serverPath).Msg("updating server AST to remove routes")
 
+	fset := token.NewFileSet()
 	src, err := os.ReadFile(serverPath)
 	if err != nil {
 		return fmt.Errorf("read server.go: %w", err)
@@ -35,59 +35,13 @@ func deleteModule(mi moduleInput) error {
 		return fmt.Errorf("parse server.go: %w", err)
 	}
 
-	// ✅ 1. Remove import for that module
 	importPath := fmt.Sprintf("%s/internal/app/modules/%s", mi.ModulePath, mi.Package)
 	if astutil.DeleteImport(fset, f, importPath) {
-		lg.Info("removed import", slog.String("import", importPath))
+		logger.Info().Str("import", importPath).Msg("removed import")
 	}
 
-	// ✅ 2. Remove <mi.Package>.RegisterRoutes(apiV1) call inside setupRoutes()
-	ast.Inspect(f, func(n ast.Node) bool {
-		fn, ok := n.(*ast.FuncDecl)
-		if !ok || fn.Name.Name != "setupRoutes" {
-			return true
-		}
+	removeRegisterRoutesCall(f, mi.Package)
 
-		newBody := make([]ast.Stmt, 0, len(fn.Body.List))
-		for _, stmt := range fn.Body.List {
-			// Check if it's a call expression like `pkg.RegisterRoutes(apiV1)`
-			call, ok := stmt.(*ast.ExprStmt)
-			if !ok {
-				newBody = append(newBody, stmt)
-				continue
-			}
-
-			callExpr, ok := call.X.(*ast.CallExpr)
-			if !ok {
-				newBody = append(newBody, stmt)
-				continue
-			}
-
-			sel, ok := callExpr.Fun.(*ast.SelectorExpr)
-			if !ok {
-				newBody = append(newBody, stmt)
-				continue
-			}
-
-			pkgIdent, ok := sel.X.(*ast.Ident)
-			if !ok {
-				newBody = append(newBody, stmt)
-				continue
-			}
-
-			// Match <mi.Package>.RegisterRoutes(...)
-			if pkgIdent.Name == mi.Package && sel.Sel.Name == "RegisterRoutes" {
-				lg.Info("removed RegisterRoutes call", slog.String("module", mi.Package))
-				continue // skip adding it to the new body
-			}
-
-			newBody = append(newBody, stmt)
-		}
-		fn.Body.List = newBody
-		return false
-	})
-
-	// ✅ Write modified AST back to file
 	file, err := os.Create(serverPath)
 	if err != nil {
 		return fmt.Errorf("open for write: %w", err)
@@ -98,31 +52,38 @@ func deleteModule(mi moduleInput) error {
 		return fmt.Errorf("write file: %w", err)
 	}
 
-	lg.Info("updated server.go after removing module")
+	logger.Info().Msg("updated server.go after removing module")
 	return nil
 }
 
 func newRemoveCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "remove:modules <module_names...>",
-		Short: "Remove modules",
+		Short: "Remove one or more modules cleanly",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			lg.Info("starting module removal", slog.Int("count", len(args)))
+			logger.Info().Int("count", len(args)).Msg("starting module removal")
+
 			for _, raw := range args {
 				mi, err := buildNames(raw)
 				if err != nil {
 					return err
 				}
-				if err := deleteModule(mi); err != nil {
+
+				if err := removeModule(mi); err != nil {
 					return err
 				}
-				// Refresh migrate models/imports after removal
+
 				if err := refreshAtlasProvider(mi); err != nil {
 					return err
 				}
-				lg.Info("module removed", slog.String("entity", mi.Entity), slog.String("module", mi.Package))
+
+				logger.Info().
+					Str("entity", mi.Entity).
+					Str("module", mi.Package).
+					Msg("module removed")
 			}
-			lg.Info("module removal finished")
+
+			logger.Info().Msg("module removal finished")
 			return nil
 		},
 	}

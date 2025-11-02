@@ -27,7 +27,7 @@ func setup() {
 
 func RegisterRoutes(router fiber.Router) {
 	setup()
-	fmt.Println("Module: {{.Entity}} is registered successfully")
+	logger.Info().Str("module", "{{.Entity}}").Msg("Module registered successfully.")
 	{{.Var}}Router := router.Group("/{{.RouteGroup}}")
 	{{.Var}}Router.Use(core.SetModule("{{.Entity}}"), authn.AuthMiddleware())
 	{{.Var}}Router.Get("/list", {{.Var}}Controller.List)

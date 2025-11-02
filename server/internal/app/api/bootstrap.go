@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/config"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/db"
+	"github.com/aritradevelops/authinfinity/server/internal/pkg/logger"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/server"
 )
 
@@ -24,12 +24,13 @@ func Bootstrap() error {
 	if err != nil {
 		return err
 	}
+	logger.Info().Msg("Database connected successfully.")
 
 	srv := server.New(&conf, database)
 
 	go func() {
 		if err := srv.Start(); err != nil {
-			log.Printf("failed to start the server due to %v", err)
+			logger.Fatal().Err(err).Msg("failed to start the server")
 			os.Exit(1)
 		}
 	}()
@@ -38,7 +39,7 @@ func Bootstrap() error {
 	signal.Notify(quitCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 
 	<-quitCh
-	log.Println("shutting down to server")
+	logger.Info().Msg("Bye! shutting down gracefully...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
@@ -51,5 +52,6 @@ func Bootstrap() error {
 	if err != nil {
 		return err
 	}
+	logger.Info().Msg("Database disconnected.")
 	return nil
 }

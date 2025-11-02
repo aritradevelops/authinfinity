@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/aritradevelops/authinfinity/server/internal/middlewares/translator"
@@ -28,7 +27,6 @@ func NewController[S Schema](service Service[S]) Controller[S] {
 }
 
 func (bc *BaseController[S]) List(c *fiber.Ctx) error {
-	fmt.Println("here im", bc.service)
 	result, err := bc.service.List(c)
 	if err != nil {
 		return err
@@ -39,7 +37,6 @@ func (bc *BaseController[S]) List(c *fiber.Ctx) error {
 func (bc *BaseController[S]) Create(c *fiber.Ctx) error {
 	id, err := bc.service.Create(c)
 	if err != nil {
-		fmt.Printf("Error : %+v", err)
 		return err
 	}
 
@@ -54,7 +51,6 @@ func (bc *BaseController[S]) Create(c *fiber.Ctx) error {
 func (bc *BaseController[S]) Update(c *fiber.Ctx) error {
 	acknowledged, err := bc.service.Update(c)
 	if err != nil {
-		fmt.Printf("Error : %+v", err)
 		return err
 	}
 	return c.JSON(
@@ -67,7 +63,6 @@ func (bc *BaseController[S]) Update(c *fiber.Ctx) error {
 func (bc *BaseController[S]) View(c *fiber.Ctx) error {
 	data, err := bc.service.View(c)
 	if err != nil {
-		fmt.Printf("Error : %+v", err)
 		return err
 	}
 
@@ -82,7 +77,6 @@ func (bc *BaseController[S]) View(c *fiber.Ctx) error {
 func (bc *BaseController[S]) Delete(c *fiber.Ctx) error {
 	data, err := bc.service.Delete(c)
 	if err != nil {
-		fmt.Printf("Error: %+v", err)
 		return err
 	}
 	return c.JSON(

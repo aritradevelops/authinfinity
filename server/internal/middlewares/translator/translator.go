@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/aritradevelops/authinfinity/server/internal/pkg/logger"
 	"github.com/gofiber/contrib/fiberi18n/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -29,7 +30,7 @@ func Localize(c *fiber.Ctx, id string, data ...any) string {
 		TemplateData: data[0],
 	})
 	if err != nil {
-		// TODO: log notice level
+		logger.Warn().Str("key", id).Msg("Missing entry in locales")
 		return id
 	}
 	return msg
