@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/account"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/emailverificationrequest"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/password"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/user"
@@ -33,7 +34,7 @@ func (s *AuthService) Register(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	account, err := s.accountService.GetAccountFromReq(c)
+	account, err := account.Repository().GetAccountFromReq(c)
 
 	if err != nil {
 		return core.NewNotFoundError(c)
