@@ -1,11 +1,11 @@
 package {{.Package}} 
 
 import (
-	"fmt"
-	"{{.ModulePath}}/internal/pkg/core"
 	"github.com/gofiber/fiber/v2"
+	"{{.ModulePath}}/internal/pkg/core"
 	"{{.ModulePath}}/internal/pkg/db"
-	"github.com/aritradevelops/authinfinity/server/internal/authn"
+	"{{.ModulePath}}/internal/authn"
+	"{{.ModulePath}}/internal/pkg/logger"
 )
 
 func setup() {
@@ -27,7 +27,7 @@ func setup() {
 
 func RegisterRoutes(router fiber.Router) {
 	setup()
-	logger.Info().Str("module", "{{.Entity}}").Msg("Module registered successfully.")
+	logger.Info().Str("module", "{{.Entity}}").Msg("Module registered s")
 	{{.Var}}Router := router.Group("/{{.RouteGroup}}")
 	{{.Var}}Router.Use(core.SetModule("{{.Entity}}"), authn.AuthMiddleware())
 	{{.Var}}Router.Get("/list", {{.Var}}Controller.List)
