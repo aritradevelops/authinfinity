@@ -31,7 +31,7 @@ func (p *Postgres) Connect() error {
 		panic(err)
 	}
 	db, err := gorm.Open(postgres.Open(p.uri), &gorm.Config{
-
+		TranslateError: true,
 		Logger: logger.New(log.New(logFile, "\r\n", log.LstdFlags), logger.Config{
 			SlowThreshold:             time.Second, // Slow SQL threshold
 			LogLevel:                  logger.Info, // Log level

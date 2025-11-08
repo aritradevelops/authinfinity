@@ -25,9 +25,13 @@ func New() fiber.Handler {
 }
 
 func Localize(c *fiber.Ctx, id string, data ...any) string {
+	var tmplData any
+	if len(data) > 0 {
+		tmplData = data[0]
+	}
 	msg, err := fiberi18n.Localize(c, &i18n.LocalizeConfig{
 		MessageID:    id,
-		TemplateData: data[0],
+		TemplateData: tmplData,
 	})
 	if err != nil {
 		logger.Warn().Str("key", id).Msg("Missing entry in locales")

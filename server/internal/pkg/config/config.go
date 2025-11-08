@@ -24,6 +24,7 @@ var (
 func Load() (Config, error) {
 	var config Config
 	err := env.Parse(&config.Env)
+	instance = config
 	return config, err
 }
 

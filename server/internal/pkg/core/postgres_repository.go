@@ -108,7 +108,6 @@ func (r *PostgresRepository[S]) Create(data S) (string, error) {
 	if err := r.db.Db().Create(&data).Error; err != nil {
 		return "", err
 	}
-
 	return data.GetID(), nil
 }
 

@@ -67,6 +67,14 @@ func NewDuplicateKeyError(c *fiber.Ctx, key string) HttpError {
 		Message: translator.Localize(c, "validation.unique", map[string]string{
 			"Field": key,
 		}),
-		StatusCode: http.StatusConflict,
+		StatusCode: http.StatusBadRequest,
+		Info: ErrorInfo{
+			ValidationErrors: []validator.ValidationError{
+				{
+					Message: translator.Localize(c, "validation.unique", map[string]string{"Field": key}),
+					Field:   key,
+				},
+			},
+		},
 	}
 }

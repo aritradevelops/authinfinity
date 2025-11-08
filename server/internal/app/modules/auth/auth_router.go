@@ -2,7 +2,6 @@ package auth
 
 import (
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/user"
-	"github.com/aritradevelops/authinfinity/server/internal/authn"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/core"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/db"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/logger"
@@ -27,12 +26,8 @@ func setup() {
 
 func RegisterRoutes(router fiber.Router) {
 	setup()
-	logger.Info().Str("module", "Auth").Msg("Module registered s")
-	authRouter := router.Group("/auths")
-	authRouter.Use(core.SetModule("Auth"), authn.AuthMiddleware())
-	authRouter.Get("/list", authController.List)
-	authRouter.Post("/create", authController.Create)
-	authRouter.Get("/view/:id", authController.View)
-	authRouter.Put("/update/:id", authController.Update)
-	authRouter.Delete("/delete/:id", authController.Delete)
+	logger.Info().Str("module", "Auth").Msg("Module registered.")
+	authRouter := router.Group("/auth")
+	authRouter.Use(core.SetModule("Auth"))
+	authRouter.Post("/register", authController.Register)
 }

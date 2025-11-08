@@ -23,5 +23,10 @@ env "dev" {
   migration {
     dir = "file://migrations"
   }
-
+}
+env "local" {
+  url = "postgresql://postgres:admin@localhost:5432/authinfinity?sslmode=disable"
+  migration {
+    dir = "file://migrations"
+  }
 }
