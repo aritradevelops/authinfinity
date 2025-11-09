@@ -11,9 +11,10 @@ import (
 type User struct {
 	ID uuid.UUID `json:"id,omitempty" gorm:"type:uuid;default:gen_random_uuid()"`
 	// add your additional fields here
-	Name  string  `json:"name" validate:"required,min=3,max=100" gorm:"type:varchar(100);not null"`
-	Email string  `json:"email" validate:"required,email" gorm:"type:varchar(255);uniqueIndex;not null"`
-	Dp    *string `json:"dp,omitempty" validate:"omitempty,url" gorm:"type:text"`
+	Name          string  `json:"name" validate:"required,min=3,max=100" gorm:"type:varchar(100);not null"`
+	Email         string  `json:"email" validate:"required,email" gorm:"type:varchar(255);uniqueIndex;not null"`
+	Dp            *string `json:"dp,omitempty" validate:"omitempty,url" gorm:"type:text"`
+	EmailVerified bool    `json:"email_verified,omitempty" gorm:"type:boolean"`
 	// system generated fields
 	AccountID uuid.UUID  `json:"account_id" validate:"required" gorm:"type:uuid;not null"`
 	CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime:false"`

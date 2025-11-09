@@ -8,13 +8,14 @@ import (
 	"time"
 
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/account"
+	"github.com/aritradevelops/authinfinity/server/internal/app/modules/app"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/emailverificationrequest"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/password"
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/user"
 	"github.com/aritradevelops/authinfinity/server/internal/middlewares/translator"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/config"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/core"
-	"github.com/aritradevelops/authinfinity/server/internal/pkg/db"
+	"github.com/aritradevelops/authinfinity/server/internal/pkg/logger"
 	"github.com/aritradevelops/authinfinity/server/internal/pkg/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -63,8 +64,9 @@ func (s *AuthService) Register(c *fiber.Ctx) error {
 	}
 
 	userData := &user.User{
-		Name:  payload.Name,
-		Email: payload.Email,
+		Name:          payload.Name,
+		Email:         payload.Email,
+		EmailVerified: false,
 	}
 
 	// insert the user
@@ -78,6 +80,10 @@ func (s *AuthService) Register(c *fiber.Ctx) error {
 	}
 	// hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(payload.Password), PasswordHashingCost)
+
+	if err != nil {
+		return err
+	}
 
 	passwordData := &password.Password{
 		Password: string(hashedPassword),
@@ -115,7 +121,7 @@ func (s *AuthService) Register(c *fiber.Ctx) error {
 	}
 	// trigger a mail
 
-	fmt.Printf("Email verification link: https://%s/verify-email?hash=%s\n", c.Request().URI().Host(), emailVerificationRequestData.Hash)
+	logger.Info().Msg(fmt.Sprintf("Email verification link: https://%s/verify-email?hash=%s\n", c.Request().URI().Host(), emailVerificationRequestData.Hash))
 
 	// respond to the user
 	return nil
@@ -137,12 +143,49 @@ func (s *AuthService) VerifyEmail(c *fiber.Ctx) error {
 			})},
 		})
 	}
-	emailVerificationRequest := &emailverificationrequest.EmailVerificationRequest{}
-	err = emailverificationrequest.Repository().View(core.Filter{
-		"account_id": account.ID,
-		"hash":       hash,
-		"expires_at": db.LessThan(),
-	}, &emailVerificationRequest)
+	_, err = emailverificationrequest.Repository().GetActiveEmailVerificationRequest(
+		account.ID.String(),
+		hash,
+	)
+	return err
+}
 
+func (s *AuthService) Login(c *fiber.Ctx) error {
+	// get the account
+	conf := config.Instance()
+	account, err := account.Service().GetAccountFromReq(c)
+	if err != nil {
+		return core.NewNotFoundError(c)
+	}
+
+	// parse the body
+	var payload LoginPayload
+	err = c.BodyParser(&payload)
+	if err != nil {
+		return core.NewBadRequestError(c)
+	}
+
+	// validate email
+	errs := validator.Validate(payload, c)
+	if errs != nil {
+		return core.NewRequestValidationError(c, errs)
+	}
+	existingUser := &user.User{}
+	err = user.Repository().View(core.Filter{
+		"email":          payload.Email,
+		"deleted_at":     nil,
+		"email_verified": true,
+	}, &existingUser)
+
+	if err != nil {
+		return err
+	}
+	app, err := app.Service().GetSysAdminApp()
+
+	if err != nil {
+		return err
+	}
+
+	// sign tokens
 	return nil
 }

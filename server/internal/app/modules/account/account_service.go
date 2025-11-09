@@ -31,7 +31,7 @@ func (as *AccountService) GetAccountFromReq(c *fiber.Ctx) (*Account, error) {
 	// 	return nil, core.NewInternalServerError(c)
 	// }
 
-	if strings.HasSuffix(host, conf.Env.BaseDomain) {
+	if strings.HasSuffix(host, "."+conf.Env.BaseDomain) {
 		slug := strings.TrimSuffix(host, "."+conf.Env.BaseDomain)
 		err := Repository().View(core.Filter{"slug": slug}, &account)
 		if err != nil {

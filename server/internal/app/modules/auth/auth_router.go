@@ -30,4 +30,5 @@ func RegisterRoutes(router fiber.Router) {
 	authRouter := router.Group("/auth")
 	authRouter.Use(core.SetModule("Auth"))
 	authRouter.Post("/register", authController.Register)
+	authRouter.Get("/verify-email", authController.VerifyEmail)
 }

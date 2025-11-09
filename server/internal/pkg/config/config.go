@@ -4,6 +4,11 @@ import (
 	"github.com/caarlos0/env/v11"
 )
 
+const (
+	emailVerificationHashLength = 32
+	refreshTokenHashLength      = 64
+)
+
 type Env struct {
 	Port                        int    `env:"PORT" envDefault:"8080"`
 	DBConnectionURI             string `env:"DB_CONNECTION_URI,required"`
@@ -14,7 +19,9 @@ type Env struct {
 }
 
 type Config struct {
-	Env Env
+	Env                         Env
+	EmailVerificationHashLength int
+	RefreshTokenHashLength      int
 }
 
 var (
@@ -24,6 +31,10 @@ var (
 func Load() (Config, error) {
 	var config Config
 	err := env.Parse(&config.Env)
+
+	config.EmailVerificationHashLength = emailVerificationHashLength
+	config.RefreshTokenHashLength = refreshTokenHashLength
+
 	instance = config
 	return config, err
 }

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/aritradevelops/authinfinity/server/internal/app/modules/user"
@@ -20,7 +19,6 @@ var authController *AuthController
 func (bc *AuthController) Register(c *fiber.Ctx) error {
 	err := Service().Register(c)
 	if err != nil {
-		fmt.Printf("Error : %+v", err)
 		return err
 	}
 
@@ -28,6 +26,25 @@ func (bc *AuthController) Register(c *fiber.Ctx) error {
 	return c.JSON(
 		response.NewServerResponse(
 			translator.Localize(c, "user.register", map[string]string{"Entity": c.Locals("module").(string)}),
+			fiber.Map{},
+		),
+	)
+}
+
+func (bc *AuthController) VerifyEmail(c *fiber.Ctx) error {
+	err := Service().VerifyEmail(c)
+	if err != nil {
+		c.Status(http.StatusBadRequest)
+		return c.JSON(
+			response.NewServerResponse(
+				translator.Localize(c, "user.verification_failed"),
+				fiber.Map{},
+			),
+		)
+	}
+	return c.JSON(
+		response.NewServerResponse(
+			translator.Localize(c, "user.verification_success"),
 			fiber.Map{},
 		),
 	)
